@@ -48,7 +48,6 @@
         }
     </style>
 </head>
-<!-- Menggunakan flex-col-reverse untuk memindahkan sidebar ke bottom nav pada HP, dan h-[100dvh] untuk mobile address bar support -->
 <body class="flex flex-col-reverse md:flex-row h-[100dvh] bg-gray-50 overflow-hidden font-sans text-slate-800">
 
     <!-- Global Notification -->
@@ -89,7 +88,6 @@
             <button onclick="window.switchTab('history')" id="tab-history" class="nav-btn flex flex-col md:flex-row items-center justify-center lg:justify-start p-1.5 md:p-3 rounded-xl transition-colors text-indigo-200 hover:bg-indigo-800 hover:text-white min-w-[4.5rem] md:min-w-0">
                 <i class="ph ph-receipt text-xl md:text-2xl mb-1 md:mb-0 pointer-events-none"></i><span class="text-[10px] leading-tight md:text-base block md:hidden lg:block md:ml-3 font-medium pointer-events-none">Riwayat</span>
             </button>
-            <!-- Di HP jadi ml-auto untuk menempel kanan, di Desktop mt-auto menempel bawah -->
             <button onclick="window.switchTab('settings')" id="tab-settings" class="nav-btn flex flex-col md:flex-row items-center justify-center lg:justify-start p-1.5 md:p-3 rounded-xl transition-colors text-indigo-200 hover:bg-indigo-800 hover:text-white ml-auto md:ml-0 md:mt-auto min-w-[4.5rem] md:min-w-0 pr-3 md:pr-0">
                 <i class="ph ph-gear text-xl md:text-2xl mb-1 md:mb-0 pointer-events-none"></i><span class="text-[10px] leading-tight md:text-base block md:hidden lg:block md:ml-3 font-medium pointer-events-none">Setting</span>
             </button>
@@ -108,7 +106,7 @@
 
         <!-- ================= VIEW: POS ================= -->
         <div id="view-pos" class="flex-1 flex flex-col lg:flex-row overflow-hidden w-full" style="display: flex;">
-            <!-- Left: Products (Ambil 60% tinggi di HP) -->
+            <!-- Left: Products -->
             <div class="flex-1 flex flex-col h-[60%] lg:h-full bg-gray-50 overflow-hidden">
                 <div class="bg-white p-3 md:p-4 shadow-sm flex flex-col sm:flex-row justify-between items-center gap-3 md:gap-4 z-10">
                     <div class="relative w-full sm:w-80 md:w-96">
@@ -123,10 +121,9 @@
                 </div>
             </div>
 
-            <!-- Right: Cart Sidebar (Ambil 40% tinggi di HP, memunculkan kesan bottom sheet) -->
-            <div class="w-full lg:w-80 xl:w-96 h-[42EYHgEzWEdjJgYKAu8VjC4DohVYUMbvZ6Ua45MgSaYBTFv3725expKB69YsjM6Utj99E6Sn3LpcxQ4mNrwfrJLM5NGbWiQflex-col z-20 rounded-t-3xl lg:rounded-none border-t border-gray-100 lg:border-t-0 lg:border-l relative transition-transform">
+            <!-- Right: Cart Sidebar -->
+            <div class="w-full lg:w-80 xl:w-96 h-[42%] lg:h-full bg-white flex flex-col z-20 rounded-t-3xl lg:rounded-none border-t border-gray-100 lg:border-t-0 lg:border-l relative transition-transform">
                 <div class="p-4 md:p-5 border-b border-gray-100 flex justify-between items-center pt-5 md:pt-5">
-                    <!-- Indikator Drag/Geser khusus untuk mempermanis mobile -->
                     <div class="absolute top-2 left-1/2 transform -translate-x-1/2 w-10 h-1.5 bg-gray-200 rounded-full lg:hidden"></div>
                     
                     <h2 class="text-base md:text-xl font-bold flex items-center gap-2"><i class="ph-fill ph-shopping-bag text-indigo-600"></i> Pesanan</h2>
@@ -323,20 +320,20 @@
                 </div>
 
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 md:p-6">
-                    <h2 class="text-sm md:text-lg font-bold mb-3 md:mb-4 flex items-center gap-2"><i class="ph-fill ph-printer text-indigo-500"></i> Printer Struk</h2>
+                    <h2 class="text-sm md:text-lg font-bold mb-3 md:mb-4 flex items-center gap-2"><i class="ph-fill ph-printer text-indigo-500"></i> Printer Struk (Bluetooth)</h2>
                     <div class="space-y-3 md:space-y-4">
                         <div class="p-3 md:p-4 border border-gray-200 rounded-xl bg-gray-50 flex justify-between items-center">
                             <div>
-                                <p class="font-medium text-xs md:text-base text-gray-800">Status Printer Bluetooth</p>
+                                <p class="font-medium text-xs md:text-base text-gray-800">Status Printer</p>
                                 <p id="printer-status" class="text-[10px] md:text-sm text-gray-500 mt-0.5">Belum terhubung</p>
-                                <p id="printer-device-name" class="text-[10px] md:text-xs text-indigo-600 font-bold mt-1 hidden">Sinyal: -</p>
+                                <p id="printer-device-name" class="text-[10px] md:text-xs text-indigo-600 font-bold mt-1 hidden">Perangkat: -</p>
                             </div>
                             <i id="printer-icon" class="ph-fill ph-bluetooth-connected text-gray-400 text-2xl md:text-3xl"></i>
                         </div>
                         <button type="button" onclick="window.connectBluetooth()" class="w-full py-2.5 md:py-3 bg-blue-50 text-blue-700 font-bold rounded-xl border border-blue-200 hover:bg-blue-100 flex justify-center items-center gap-2 text-xs md:text-base active:scale-95 transition-transform">
                             <i class="ph ph-bluetooth-connected pointer-events-none text-base md:text-lg"></i> Hubungkan Printer Bluetooth
                         </button>
-                        <p class="text-[9px] md:text-xs text-gray-400 text-center mt-2 leading-relaxed">Jika Bluetooth gagal/tidak di-support pada browser HP, sistem otomatis memakai Print Browser Native (simpan sebagai PDF/Cetak lewat Wi-Fi).</p>
+                        <p class="text-[9px] md:text-xs text-gray-400 text-center mt-2 leading-relaxed">Catatan: Jika sudah terhubung, sistem akan otomatis mencetak (auto-print) setiap kali pembayaran berhasil.</p>
                     </div>
                 </div>
             </div>
@@ -344,8 +341,6 @@
     </main>
 
     <!-- ================= MODALS ================= -->
-    <!-- Mobile-First Modals: changed items-center to items-end on mobile, and rounded-2xl to rounded-t-3xl for the bottom-sheet look -->
-
     <!-- Modal Form Product -->
     <div id="modal-product" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-end md:items-center justify-center z-50 p-0 md:p-4 modal-enter" style="display: none;">
         <div class="bg-white p-5 md:p-8 rounded-t-3xl md:rounded-2xl shadow-2xl w-full md:w-[95%] max-w-2xl max-h-[95vh] md:max-h-[90vh] overflow-y-auto pb-8 md:pb-8">
@@ -569,7 +564,7 @@
             <h2 class="text-lg md:text-2xl font-black text-gray-800 mb-1 mt-3 md:mt-2">Pembayaran QRIS</h2>
             <p class="text-[10px] md:text-sm text-gray-500 mb-5 md:mb-6">Scan kode QR ini menggunakan aplikasi E-Wallet pelanggan.</p>
             
-            <div class="w-42EYHgEzWEdjJgYKAu8VjC4DohVYUMbvZ6Ua45MgSaYBTFv3725expKB69YsjM6Utj99E6Sn3LpcxQ4mNrwfrJLM5NGbWiQ justify-center border-2 border-indigo-100 shadow-inner">
+            <div class="w-42 h-42 md:w-56 md:h-56 mb-5 md:mb-6 bg-gray-50 rounded-2xl flex items-center justify-center border-2 border-indigo-100 shadow-inner relative">
                 <i id="qris-spinner" class="ph ph-spinner-gap animate-spin text-4xl text-indigo-400 absolute z-0"></i>
                 <img id="qris-image-view" src="" class="w-full h-full object-contain relative z-10 rounded-xl opacity-0 transition-opacity duration-300" onload="this.classList.remove('opacity-0'); document.getElementById('qris-spinner').style.display='none';" />
             </div>
@@ -606,7 +601,7 @@
             <div class="p-4 bg-gray-50 border-t border-gray-200 flex gap-2 pb-8 md:pb-4 no-print flex-shrink-0">
                 <button type="button" onclick="window.closeModals()" class="flex-1 py-3 bg-white border border-gray-300 font-bold text-gray-700 rounded-xl text-sm md:text-base active:scale-95 transition-transform">Tutup</button>
                 <button type="button" onclick="window.printReceipt()" class="flex-1 py-3 bg-indigo-600 text-white font-bold rounded-xl shadow-md flex justify-center items-center gap-2 text-sm md:text-base active:scale-95 transition-transform">
-                    <i class="ph ph-printer text-lg md:text-xl pointer-events-none"></i> Cetak
+                    <i class="ph ph-printer text-lg md:text-xl pointer-events-none"></i> Cetak Ulang
                 </button>
             </div>
         </div>
@@ -632,12 +627,17 @@
 
         const state = {
             user: null, posName: 'CAFE POS', products: [], categories: [], addonGroups: [], vouchers: [], history: [], cart: [], 
-            selectedCategory: 'Semua', paymentMethod: 'Cash', currentTransaction: null, printerDevice: null,
+            selectedCategory: 'Semua', paymentMethod: 'Cash', currentTransaction: null, 
+            printerDevice: null, printerServer: null, printerCharacteristic: null, // <-- TAMBAHAN UNTUK BLUETOOTH
             isOfflineMode: false, dashboardFilterMonth: '', tempPendingProduct: null, currentDiscount: 0, appliedVoucherId: null,
             veloExtId: null, qrisPollingInterval: null 
         };
 
-        const formatRp = (num) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(Number(num) || 0);
+        const formatRp = (num) => {
+            const formatted = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(Number(num) || 0);
+            return formatted.replace(/\u00A0/g, ' ').replace(/\u202F/g, ' ');
+        };
+        
         window.playHaptic = () => { try { if (navigator.vibrate) navigator.vibrate(30); } catch(e){} };
 
         window.showNotification = (msg, type = 'success') => {
@@ -892,7 +892,6 @@
                 else return window.showNotification("Stok tidak mencukupi!", "error");
             }
             window.renderCart();
-            // Scroll to bottom of cart instantly on mobile
             setTimeout(() => {
                const cartEl = document.getElementById('cart-items');
                if(cartEl) cartEl.scrollTop = cartEl.scrollHeight;
@@ -953,12 +952,10 @@
             }
         }
 
-        // ================= NEW: RENDER WAITING ORDERS (ADMIN) =================
         function renderWaitingOrders() {
             const container = document.getElementById('waiting-order-grid');
             if (!container) return;
             
-            // Filter: Hanya tampilkan yang FulfillmentStatus-nya WAITING
             const waitingOrders = state.history.filter(t => t.fulfillmentStatus === 'WAITING');
 
             if (waitingOrders.length === 0) {
@@ -987,7 +984,6 @@
                     <i class="ph-fill ph-check-circle text-base pointer-events-none"></i> Tandai Selesai
                 </button>`;
 
-                // LOGIKA UNTUK QRIS PAYMENT
                 if (t.status === 'VOID' || t.paymentStatus === 'EXPIRED') {
                     cardClass = "bg-red-50 rounded-2xl shadow-sm border border-red-300";
                     headerClass = "bg-red-100/70 border-b border-red-200";
@@ -1007,8 +1003,8 @@
                         badgeHtml = '<span class="px-2 py-1 bg-green-100 text-green-600 text-[8px] md:text-[9px] font-bold rounded uppercase tracking-wider whitespace-nowrap">QRIS Lunas</span>';
                         paymentDesc = '<p class="text-[10px] text-green-600 font-bold mt-1"><i class="ph-bold ph-check-circle"></i> Pembayaran QRIS berhasil diterima.</p>';
                     }
-                } else if (t.paymentMethod === 'Cash') {
-                     paymentDesc = '<p class="text-[10px] text-orange-600 font-bold mt-1"><i class="ph-bold ph-storefront"></i> Pembayaran Tunai (Bayar di Kasir).</p>';
+                } else if (t.paymentMethod === 'Cash') { 
+                    paymentDesc = '<p class="text-[10px] text-orange-600 font-bold mt-1"><i class="ph-bold ph-storefront"></i> Pembayaran Tunai (Bayar di Kasir).</p>';
                 }
 
                 return `
@@ -1039,7 +1035,6 @@
         window.archiveOrder = async (id) => {
             window.playHaptic();
             try { 
-                // Set fulfillmentStatus to ARCHIVED agar hilang dari antrean Waiting
                 await publicDbRef('history').doc(id).update({ fulfillmentStatus: 'ARCHIVED' }); 
                 window.showNotification("Pesanan dihapus dari antrean"); 
             } catch (err) { window.showNotification("Gagal mengarsipkan pesanan", "error"); }
@@ -1105,7 +1100,6 @@
             }).join('');
         }
 
-        // ================= NEW: HISTORY TABLE =================
         function renderHistoryTable() {
             document.getElementById('history-table-body').innerHTML = state.history.map(t => {
                 const isVoid = t.status === 'VOID';
@@ -1150,7 +1144,14 @@
             }).join('');
         }
 
-        window.reprintTransaction = (id) => { window.playHaptic(); const trx = state.history.find(t => String(t.id) === String(id)); if(trx) openReceipt(trx); };
+        window.reprintTransaction = (id) => { 
+            window.playHaptic(); 
+            const trx = state.history.find(t => String(t.id) === String(id)); 
+            if(trx) {
+                state.currentTransaction = trx;
+                openReceipt(trx); 
+            }
+        };
 
         window.voidTransaction = async (id) => {
             window.playHaptic(); const trx = state.history.find(t => String(t.id) === String(id));
@@ -1294,7 +1295,6 @@
         window.deleteVoucher = async (id) => { window.playHaptic(); if(!confirm("Yakin ingin menghapus voucher ini?")) return; try { await publicDbRef('vouchers').doc(id).delete(); window.showNotification("Voucher dihapus"); } catch (err) { window.showNotification("Gagal", "error"); } };
 
         window.toggleVoucherStatus = async (id, newStatus) => { window.playHaptic(); try { await publicDbRef('vouchers').doc(id).update({ isActive: newStatus }); } catch (err) { window.showNotification("Gagal ubah status", "error"); } };
-
 
         window.openCheckout = () => {
             window.playHaptic();
@@ -1521,6 +1521,12 @@
                 window.clearCart(); 
                 window.closeModals(); 
                 openReceipt(transaction);
+
+                // --- AUTO PRINT: Otomatis mencetak setelah checkout berhasil jika Printer Bluetooth nyala ---
+                if (state.printerDevice && state.printerDevice.gatt.connected) {
+                    setTimeout(() => window.printReceipt(), 500);
+                }
+
             } catch (err) { 
                 console.error(err);
                 window.showNotification("Gagal simpan transaksi", "error"); 
@@ -1557,28 +1563,169 @@
             document.getElementById('modal-receipt').style.display = 'flex';
         }
 
-        window.printReceipt = () => {
-            window.playHaptic();
-            if (state.printerDevice && state.printerDevice.gatt.connected) {
-                window.showNotification("Mengirim data ke Printer...");
-                setTimeout(() => window.showNotification("Struk dicetak!"), 1500);
-            } else { window.print(); }
-        };
-
         window.saveSettings = async (e) => { e.preventDefault(); window.playHaptic(); try { await publicDbRef('settings').doc('general').set({ posName: document.getElementById('input-pos-name').value }); window.showNotification("Nama POS diperbarui!"); } catch (err) {} };
+
+        // --- BLUETOOTH PRINTER LOGIC FIX ---
+        const BT_SERVICES = [
+            '000018f0-0000-1000-8000-00805f9b34fb', // Generik POS
+            'e7810a71-73ae-499d-8c15-faa9aef0c3f2', // Iware / Panda / Beberapa seri murah
+            '49535343-fe7d-4ae5-8fa9-9fafd205e455', // BLE SPP Serial
+            '0000fee7-0000-1000-8000-00805f9b34fb'  // Generik 2
+        ];
 
         window.connectBluetooth = async () => {
             window.playHaptic();
             try {
-                const device = await navigator.bluetooth.requestDevice({ acceptAllDevices: true, optionalServices: ['000018f0-0000-1000-8000-00805f9b34fb', 'e7810a71-73ae-499d-8c15-faa9aef0c3f2'] });
-                state.printerDevice = device; const signalName = device.name || 'Printer Kasir';
-                document.getElementById('printer-status').innerText = `Terhubung`; document.getElementById('printer-device-name').innerText = `Sinyal: ${signalName}`; document.getElementById('printer-device-name').classList.remove('hidden'); document.getElementById('printer-icon').classList.replace('text-gray-400', 'text-green-500');
-                window.showNotification(`Terhubung ke: ${signalName}`);
-            } catch (err) { window.showNotification('Gagal konek printer: ' + err.message, 'error'); }
+                if (!navigator.bluetooth) throw new Error("Browser Anda tidak mendukung Web Bluetooth. Gunakan Chrome di Android/PC.");
+
+                const device = await navigator.bluetooth.requestDevice({ 
+                    acceptAllDevices: true, 
+                    optionalServices: BT_SERVICES 
+                });
+
+                window.showNotification("Mencoba menghubungkan ke printer...");
+                const server = await device.gatt.connect();
+                let characteristic;
+
+                for (const uuid of BT_SERVICES) {
+                    try {
+                        const service = await server.getPrimaryService(uuid);
+                        const chars = await service.getCharacteristics();
+                        characteristic = chars.find(c => c.properties.write || c.properties.writeWithoutResponse);
+                        if (characteristic) break;
+                    } catch (e) { console.log('Bukan service:', uuid); }
+                }
+
+                if (!characteristic) throw new Error("Tidak menemukan karakteristik Write pada printer ini. Pastikan ini printer thermal kasir.");
+
+                state.printerDevice = device;
+                state.printerServer = server;
+                state.printerCharacteristic = characteristic;
+                
+                const signalName = device.name || 'Printer Kasir';
+                document.getElementById('printer-status').innerText = `Terhubung`; 
+                document.getElementById('printer-device-name').innerText = `Perangkat: ${signalName}`; 
+                document.getElementById('printer-device-name').classList.remove('hidden'); 
+                document.getElementById('printer-icon').classList.replace('text-gray-400', 'text-green-500');
+                window.showNotification(`Berhasil terhubung ke: ${signalName}`);
+                
+                device.addEventListener('gattserverdisconnected', () => {
+                    state.printerDevice = null; state.printerServer = null; state.printerCharacteristic = null;
+                    document.getElementById('printer-status').innerText = `Terputus`; 
+                    document.getElementById('printer-device-name').classList.add('hidden'); 
+                    document.getElementById('printer-icon').classList.replace('text-green-500', 'text-gray-400');
+                    window.showNotification('Koneksi printer terputus', 'error');
+                });
+            } catch (err) { window.showNotification('Gagal koneksi printer: ' + err.message, 'error'); }
+        };
+
+        // Fungsi ini mengconvert data transaksi ke format RAW Binary Printer (ESC/POS)
+        window.generateESCpos = (trx) => {
+            let esc = [];
+            
+            const encodeText = (text) => {
+                return Array.from(text).map(c => {
+                    let code = c.charCodeAt(0);
+                    return code > 255 ? 63 : code; // Strip karakter non-ascii
+                });
+            };
+
+            esc.push(0x1B, 0x40); // ESC @ : Initialize printer
+            esc.push(0x1B, 0x61, 0x01); // Align Center
+            
+            esc.push(0x1B, 0x45, 0x01); // Bold On
+            esc.push(...encodeText(state.posName + '\n'));
+            esc.push(0x1B, 0x45, 0x00); // Bold Off
+            esc.push(...encodeText('Struk Pembayaran\n\n'));
+            
+            esc.push(0x1B, 0x61, 0x00); // Align Left
+            
+            const bcode = trx.bookingCode || trx.id.slice(-5).toUpperCase();
+            const dateStr = new Date(trx.date).toLocaleString('id-ID', {day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit'});
+            
+            esc.push(...encodeText(`No   : ${trx.id}\n`));
+            esc.push(...encodeText(`Kode : ${bcode}\n`));
+            esc.push(...encodeText(`Tgl  : ${dateStr}\n`));
+            if (trx.customerName) esc.push(...encodeText(`Nama : ${trx.customerName}\n`));
+            esc.push(...encodeText(`Tipe : ${trx.paymentMethod}\n`));
+            esc.push(...encodeText('--------------------------------\n'));
+            
+            trx.items.forEach(i => {
+                const unitPrice = getCartItemUnitPrice(i);
+                esc.push(...encodeText(`${i.product.name}\n`));
+                if (i.addons && i.addons.length > 0) {
+                    i.addons.forEach(a => {
+                        esc.push(...encodeText(` - ${a.name} ${a.price > 0 ? '(+'+formatRp(a.price)+')' : ''}\n`));
+                    });
+                }
+                
+                const qtyPrice = `${i.quantity} x ${formatRp(unitPrice)}`;
+                const totalLine = formatRp(i.quantity * unitPrice);
+                const spaces = 32 - qtyPrice.length - totalLine.length;
+                esc.push(...encodeText(qtyPrice + ' '.repeat(Math.max(1, spaces)) + totalLine + '\n'));
+            });
+            
+            esc.push(...encodeText('--------------------------------\n'));
+            
+            const subtotalStr = `Subtotal:`;
+            const subtotalVal = formatRp(trx.subtotal);
+            esc.push(...encodeText(subtotalStr + ' '.repeat(Math.max(1, 32 - subtotalStr.length - subtotalVal.length)) + subtotalVal + '\n'));
+            
+            if (trx.discount > 0) {
+                const discStr = `Diskon:`;
+                const discVal = `-${formatRp(trx.discount)}`;
+                esc.push(...encodeText(discStr + ' '.repeat(Math.max(1, 32 - discStr.length - discVal.length)) + discVal + '\n'));
+            }
+            
+            const totalStr = `TOTAL:`;
+            const totalVal = formatRp(trx.total);
+            esc.push(0x1B, 0x45, 0x01); // Bold on
+            esc.push(...encodeText(totalStr + ' '.repeat(Math.max(1, 32 - totalStr.length - totalVal.length)) + totalVal + '\n'));
+            esc.push(0x1B, 0x45, 0x00); // Bold off
+            
+            if (trx.paymentMethod === 'Cash') {
+                const tunaiStr = `Tunai:`;
+                const tunaiVal = formatRp(trx.paymentAmount);
+                esc.push(...encodeText(tunaiStr + ' '.repeat(Math.max(1, 32 - tunaiStr.length - tunaiVal.length)) + tunaiVal + '\n'));
+                
+                const kembaliStr = `Kembali:`;
+                const kembaliVal = formatRp(trx.change);
+                esc.push(...encodeText(kembaliStr + ' '.repeat(Math.max(1, 32 - kembaliStr.length - kembaliVal.length)) + kembaliVal + '\n'));
+            }
+            
+            if (trx.notes) { esc.push(...encodeText(`\nCatatan:\n${trx.notes}\n`)); }
+
+            esc.push(0x1B, 0x61, 0x01); // Align Center
+            esc.push(...encodeText('\nTerima Kasih Atas\nKunjungan Anda!\n\n\n\n\n'));
+            
+            return new Uint8Array(esc); // Kembalikan Array Binary Bytes
+        };
+
+        window.printReceipt = async () => {
+            window.playHaptic();
+            if (state.printerDevice && state.printerDevice.gatt.connected && state.printerCharacteristic) {
+                window.showNotification("Mencetak Struk ke Printer Bluetooth...", "success");
+                try {
+                    const data = window.generateESCpos(state.currentTransaction);
+                    // Kita harus mengirim data byte per byte dalam bentuk bongkahan (Chunks) ke printer.
+                    // Jika langsung dikirim semua, memori Bluetooth akan error. (Batas wajar BLE adalah 100 bytes per chunk).
+                    const CHUNK_SIZE = 100;
+                    for (let i = 0; i < data.length; i += CHUNK_SIZE) {
+                        const chunk = data.slice(i, i + CHUNK_SIZE);
+                        await state.printerCharacteristic.writeValue(chunk);
+                        await new Promise(r => setTimeout(r, 20)); // Delay antar bongkahan agar printer tidak ngelag
+                    }
+                } catch (error) {
+                    console.error("Print Error:", error);
+                    window.showNotification("Gagal mencetak Bluetooth: " + error.message, "error");
+                    window.print(); // Fallback PDF jika Bluetooth gagal
+                }
+            } else { 
+                window.print(); // Jika belum konek printer, lempar ke Print Browser Native
+            }
         };
 
         initApp();
-
     </script>
 </body>
 </html>
