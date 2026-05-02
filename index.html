@@ -46,14 +46,36 @@
                 to { opacity: 1; transform: scale(1); }
             }
         }
+        
+        @keyframes checkmarkPop {
+            0% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .animate-pop { animation: checkmarkPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
     </style>
 </head>
 <body class="flex flex-col-reverse md:flex-row h-[100dvh] bg-gray-50 overflow-hidden font-sans text-slate-800">
 
-    <!-- Global Notification -->
-    <div id="notification" class="fixed top-4 right-4 max-w-[calc(100vw-2rem)] md:max-w-md z-[100] p-4 rounded-xl shadow-lg text-white font-medium flex items-center gap-2 transition-all transform translate-x-full opacity-0 duration-300 pointer-events-none" style="display: none;">
-        <i class="ph-fill ph-bell text-xl"></i>
-        <span id="notif-message" class="text-sm md:text-base">Pesan notifikasi</span>
+    <!-- Global Notification (Pengganti Alert) -->
+    <div id="notification" class="fixed top-4 left-4 right-4 md:left-auto md:right-4 max-w-[calc(100vw-2rem)] md:max-w-md z-[100] p-4 rounded-xl shadow-lg text-white font-medium flex items-center justify-start gap-3 transition-all transform -translate-y-full opacity-0 duration-300 pointer-events-none" style="display: none;">
+        <i id="notif-icon" class="ph-fill ph-bell text-2xl flex-shrink-0"></i>
+        <span id="notif-message" class="text-sm md:text-base font-bold leading-tight">Pesan notifikasi</span>
+    </div>
+
+    <!-- Confirm Modal (Pengganti Confirm) -->
+    <div id="modal-confirm" class="fixed inset-0 bg-black/60 backdrop-blur-sm items-center justify-center z-[100] p-4 hidden transition-opacity" style="display: none;">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden flex flex-col p-6 text-center animate-pop">
+            <div class="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="ph-fill ph-warning-circle text-4xl"></i>
+            </div>
+            <h2 class="text-xl font-black text-gray-800 mb-2">Konfirmasi</h2>
+            <p id="confirm-message" class="text-sm font-medium text-gray-600 mb-6">Apakah Anda yakin?</p>
+            <div class="flex gap-3">
+                <button id="btn-confirm-cancel" class="flex-1 py-3 bg-gray-100 font-bold rounded-xl text-gray-600 hover:bg-gray-200 active:scale-95 transition-transform">Batal</button>
+                <button id="btn-confirm-ok" class="flex-1 py-3 bg-indigo-600 text-white font-bold rounded-xl shadow-md hover:bg-indigo-700 active:scale-95 transition-transform">Ya, Lanjutkan</button>
+            </div>
+        </div>
     </div>
 
     <!-- Sidebar / Bottom Navigation Bar -->
@@ -88,6 +110,7 @@
             <button onclick="window.switchTab('history')" id="tab-history" class="nav-btn flex flex-col md:flex-row items-center justify-center lg:justify-start p-1.5 md:p-3 rounded-xl transition-colors text-indigo-200 hover:bg-indigo-800 hover:text-white min-w-[4.5rem] md:min-w-0">
                 <i class="ph ph-receipt text-xl md:text-2xl mb-1 md:mb-0 pointer-events-none"></i><span class="text-[10px] leading-tight md:text-base block md:hidden lg:block md:ml-3 font-medium pointer-events-none">Riwayat</span>
             </button>
+            <!-- Di HP jadi ml-auto untuk menempel kanan, di Desktop mt-auto menempel bawah -->
             <button onclick="window.switchTab('settings')" id="tab-settings" class="nav-btn flex flex-col md:flex-row items-center justify-center lg:justify-start p-1.5 md:p-3 rounded-xl transition-colors text-indigo-200 hover:bg-indigo-800 hover:text-white ml-auto md:ml-0 md:mt-auto min-w-[4.5rem] md:min-w-0 pr-3 md:pr-0">
                 <i class="ph ph-gear text-xl md:text-2xl mb-1 md:mb-0 pointer-events-none"></i><span class="text-[10px] leading-tight md:text-base block md:hidden lg:block md:ml-3 font-medium pointer-events-none">Setting</span>
             </button>
@@ -101,12 +124,11 @@
         <div id="loading-overlay" class="absolute inset-0 bg-white z-50 flex flex-col items-center justify-center" style="display: flex;">
             <i class="ph ph-spinner animate-spin text-4xl md:text-5xl text-indigo-600 mb-4"></i>
             <p class="text-gray-500 font-medium text-sm md:text-base">Menghubungkan ke Firebase...</p>
-            <p id="loading-warning" class="text-red-500 text-xs md:text-sm mt-4 font-bold text-center px-6" style="display: none;">Koneksi gagal atau ditolak. Pastikan Firebase Rules diizinkan!</p>
+            <p id="loading-warning" class="text-red-500 text-xs md:text-sm mt-4 font-bold text-center px-6" style="display: none;">Koneksi gagal atau ditolak.</p>
         </div>
 
         <!-- ================= VIEW: POS ================= -->
         <div id="view-pos" class="flex-1 flex flex-col lg:flex-row overflow-hidden w-full" style="display: flex;">
-            <!-- Left: Products -->
             <div class="flex-1 flex flex-col h-[60%] lg:h-full bg-gray-50 overflow-hidden">
                 <div class="bg-white p-3 md:p-4 shadow-sm flex flex-col sm:flex-row justify-between items-center gap-3 md:gap-4 z-10">
                     <div class="relative w-full sm:w-80 md:w-96">
@@ -122,7 +144,7 @@
             </div>
 
             <!-- Right: Cart Sidebar -->
-            <div class="w-full lg:w-80 xl:w-96 h-[42%] lg:h-full bg-white flex flex-col z-20 rounded-t-3xl lg:rounded-none border-t border-gray-100 lg:border-t-0 lg:border-l relative transition-transform">
+            <div class="w-full lg:w-80 xl:w-96 h-[42EYHgEzWEdjJgYKAu8VjC4DohVYUMbvZ6Ua45MgSaYBTFv3725expKB69YsjM6Utj99E6Sn3LpcxQ4mNrwfrJLM5NGbWiQflex-col z-20 rounded-t-3xl lg:rounded-none border-t border-gray-100 lg:border-t-0 lg:border-l relative transition-transform">
                 <div class="p-4 md:p-5 border-b border-gray-100 flex justify-between items-center pt-5 md:pt-5">
                     <div class="absolute top-2 left-1/2 transform -translate-x-1/2 w-10 h-1.5 bg-gray-200 rounded-full lg:hidden"></div>
                     
@@ -152,9 +174,7 @@
         <!-- ================= VIEW: WAITING ORDER ================= -->
         <div id="view-waiting" class="flex-1 p-4 md:p-8 bg-gray-50 overflow-y-auto" style="display: none;">
             <h1 class="text-xl md:text-2xl font-bold mb-4 md:mb-6">Waiting Order</h1>
-            <div id="waiting-order-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
-                <!-- Waiting orders rendered here -->
-            </div>
+            <div id="waiting-order-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6"></div>
         </div>
 
         <!-- ================= VIEW: DASHBOARD ================= -->
@@ -320,11 +340,11 @@
                 </div>
 
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 md:p-6">
-                    <h2 class="text-sm md:text-lg font-bold mb-3 md:mb-4 flex items-center gap-2"><i class="ph-fill ph-printer text-indigo-500"></i> Printer Struk (Bluetooth)</h2>
+                    <h2 class="text-sm md:text-lg font-bold mb-3 md:mb-4 flex items-center gap-2"><i class="ph-fill ph-printer text-indigo-500"></i> Printer Struk</h2>
                     <div class="space-y-3 md:space-y-4">
                         <div class="p-3 md:p-4 border border-gray-200 rounded-xl bg-gray-50 flex justify-between items-center">
                             <div>
-                                <p class="font-medium text-xs md:text-base text-gray-800">Status Printer</p>
+                                <p class="font-medium text-xs md:text-base text-gray-800">Status Printer Bluetooth</p>
                                 <p id="printer-status" class="text-[10px] md:text-sm text-gray-500 mt-0.5">Belum terhubung</p>
                                 <p id="printer-device-name" class="text-[10px] md:text-xs text-indigo-600 font-bold mt-1 hidden">Perangkat: -</p>
                             </div>
@@ -333,7 +353,7 @@
                         <button type="button" onclick="window.connectBluetooth()" class="w-full py-2.5 md:py-3 bg-blue-50 text-blue-700 font-bold rounded-xl border border-blue-200 hover:bg-blue-100 flex justify-center items-center gap-2 text-xs md:text-base active:scale-95 transition-transform">
                             <i class="ph ph-bluetooth-connected pointer-events-none text-base md:text-lg"></i> Hubungkan Printer Bluetooth
                         </button>
-                        <p class="text-[9px] md:text-xs text-gray-400 text-center mt-2 leading-relaxed">Catatan: Jika sudah terhubung, sistem akan otomatis mencetak (auto-print) setiap kali pembayaran berhasil.</p>
+                        <p class="text-[9px] md:text-xs text-gray-400 text-center mt-2 leading-relaxed">Sistem Web Bluetooth mendukung pencetakan langsung menggunakan protokol ESC/POS ke Printer Thermal POS (seperti <i>iware</i>, dll).</p>
                     </div>
                 </div>
             </div>
@@ -341,6 +361,7 @@
     </main>
 
     <!-- ================= MODALS ================= -->
+
     <!-- Modal Form Product -->
     <div id="modal-product" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-end md:items-center justify-center z-50 p-0 md:p-4 modal-enter" style="display: none;">
         <div class="bg-white p-5 md:p-8 rounded-t-3xl md:rounded-2xl shadow-2xl w-full md:w-[95%] max-w-2xl max-h-[95vh] md:max-h-[90vh] overflow-y-auto pb-8 md:pb-8">
@@ -564,7 +585,7 @@
             <h2 class="text-lg md:text-2xl font-black text-gray-800 mb-1 mt-3 md:mt-2">Pembayaran QRIS</h2>
             <p class="text-[10px] md:text-sm text-gray-500 mb-5 md:mb-6">Scan kode QR ini menggunakan aplikasi E-Wallet pelanggan.</p>
             
-            <div class="w-42 h-42 md:w-56 md:h-56 mb-5 md:mb-6 bg-gray-50 rounded-2xl flex items-center justify-center border-2 border-indigo-100 shadow-inner relative">
+            <div class="w-42EYHgEzWEdjJgYKAu8VjC4DohVYUMbvZ6Ua45MgSaYBTFv3725expKB69YsjM6Utj99E6Sn3LpcxQ4mNrwfrJLM5NGbWiQ justify-center border-2 border-indigo-100 shadow-inner">
                 <i id="qris-spinner" class="ph ph-spinner-gap animate-spin text-4xl text-indigo-400 absolute z-0"></i>
                 <img id="qris-image-view" src="" class="w-full h-full object-contain relative z-10 rounded-xl opacity-0 transition-opacity duration-300" onload="this.classList.remove('opacity-0'); document.getElementById('qris-spinner').style.display='none';" />
             </div>
@@ -601,7 +622,7 @@
             <div class="p-4 bg-gray-50 border-t border-gray-200 flex gap-2 pb-8 md:pb-4 no-print flex-shrink-0">
                 <button type="button" onclick="window.closeModals()" class="flex-1 py-3 bg-white border border-gray-300 font-bold text-gray-700 rounded-xl text-sm md:text-base active:scale-95 transition-transform">Tutup</button>
                 <button type="button" onclick="window.printReceipt()" class="flex-1 py-3 bg-indigo-600 text-white font-bold rounded-xl shadow-md flex justify-center items-center gap-2 text-sm md:text-base active:scale-95 transition-transform">
-                    <i class="ph ph-printer text-lg md:text-xl pointer-events-none"></i> Cetak Ulang
+                    <i class="ph ph-printer text-lg md:text-xl pointer-events-none"></i> Cetak
                 </button>
             </div>
         </div>
@@ -627,29 +648,53 @@
 
         const state = {
             user: null, posName: 'CAFE POS', products: [], categories: [], addonGroups: [], vouchers: [], history: [], cart: [], 
-            selectedCategory: 'Semua', paymentMethod: 'Cash', currentTransaction: null, 
-            printerDevice: null, printerServer: null, printerCharacteristic: null, // <-- TAMBAHAN UNTUK BLUETOOTH
+            selectedCategory: 'Semua', paymentMethod: 'Cash', currentTransaction: null, printerDevice: null,
+            printerServer: null, printerService: null, printerCharacteristic: null,
             isOfflineMode: false, dashboardFilterMonth: '', tempPendingProduct: null, currentDiscount: 0, appliedVoucherId: null,
             veloExtId: null, qrisPollingInterval: null 
         };
 
-        const formatRp = (num) => {
-            const formatted = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(Number(num) || 0);
-            return formatted.replace(/\u00A0/g, ' ').replace(/\u202F/g, ' ');
-        };
-        
+        const formatRp = (num) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(Number(num) || 0);
         window.playHaptic = () => { try { if (navigator.vibrate) navigator.vibrate(30); } catch(e){} };
 
+        // PENGGANTI ALERT() AMAN DARI BLOKIR IFRAME
         window.showNotification = (msg, type = 'success') => {
             const el = document.getElementById('notification');
+            const icon = document.getElementById('notif-icon');
             document.getElementById('notif-message').innerText = msg;
+            
+            if (type === 'error') {
+                el.className = `fixed top-4 left-4 right-4 md:left-auto md:right-4 max-w-[calc(100vw-2rem)] md:max-w-md z-[100] p-4 rounded-xl shadow-lg text-white font-medium flex items-center justify-start gap-3 transition-all transform -translate-y-full opacity-0 duration-300 bg-red-500`;
+                icon.className = "ph-fill ph-warning-circle text-2xl flex-shrink-0";
+            } else {
+                el.className = `fixed top-4 left-4 right-4 md:left-auto md:right-4 max-w-[calc(100vw-2rem)] md:max-w-md z-[100] p-4 rounded-xl shadow-lg text-white font-medium flex items-center justify-start gap-3 transition-all transform -translate-y-full opacity-0 duration-300 bg-green-500`;
+                icon.className = "ph-fill ph-check-circle text-2xl flex-shrink-0";
+            }
+            
             el.style.display = 'flex';
-            el.className = `fixed top-4 right-4 left-4 md:left-auto md:w-auto z-[100] p-3 md:p-4 rounded-xl shadow-lg text-white font-medium flex items-center justify-center md:justify-start gap-2 transition-all transform duration-300 ${type === 'error' ? 'bg-red-500' : 'bg-green-500'}`;
-            setTimeout(() => el.classList.remove('translate-x-full', 'opacity-0', '-translate-y-full'), 10);
+            setTimeout(() => el.classList.remove('-translate-y-full', 'opacity-0'), 10);
             setTimeout(() => {
-                el.classList.add('opacity-0', '-translate-y-full', 'md:translate-x-full');
+                el.classList.add('opacity-0', '-translate-y-full');
                 setTimeout(() => el.style.display = 'none', 300);
             }, 3000);
+        };
+
+        // PENGGANTI CONFIRM() AMAN DARI BLOKIR IFRAME
+        window.customConfirm = (msg) => {
+            return new Promise((resolve) => {
+                const modal = document.getElementById('modal-confirm');
+                document.getElementById('confirm-message').innerText = msg;
+                modal.style.display = 'flex';
+
+                document.getElementById('btn-confirm-cancel').onclick = () => {
+                    modal.style.display = 'none';
+                    resolve(false);
+                };
+                document.getElementById('btn-confirm-ok').onclick = () => {
+                    modal.style.display = 'none';
+                    resolve(true);
+                };
+            });
         };
 
         setTimeout(() => {
@@ -692,7 +737,9 @@
                     defaults.forEach(c => publicDbRef('categories').doc(c.id).set(c));
                 } else {
                     state.categories = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-                    renderCategories(); renderCategoryTable();
+                    renderCategories(); 
+                    renderCategoryTable();
+                    renderCategoryDropdown(); // ADDED
                 }
             }, handleError);
 
@@ -743,6 +790,15 @@
             container.innerHTML = html;
         }
 
+        // ADDED: Fungsi untuk menampilkan kategori di form produk
+        function renderCategoryDropdown() {
+            const select = document.getElementById('prod-category');
+            if (select) {
+                select.innerHTML = '<option value="" disabled selected>Pilih Kategori...</option>' + 
+                    state.categories.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+            }
+        }
+
         window.setCategoryFilter = (catName) => { window.playHaptic(); state.selectedCategory = catName; renderCategories(); renderProducts(); };
 
         window.handleProductClick = (prodId) => {
@@ -787,7 +843,7 @@
             let isValid = true;
             prodAddons.forEach(ag => {
                 if (ag.type === 'single' && !document.querySelector(`input[name="addon_grp_${ag.id}"]:checked`)) {
-                    isValid = false; window.showNotification(`Wajib memilih salah satu opsi pada: ${ag.name}`, 'error');
+                    isValid = false; window.showNotification(`Wajib memilih opsi pada: ${ag.name}`, 'error');
                 }
             });
             if (!isValid) return;
@@ -892,6 +948,7 @@
                 else return window.showNotification("Stok tidak mencukupi!", "error");
             }
             window.renderCart();
+            // Scroll to bottom of cart instantly on mobile
             setTimeout(() => {
                const cartEl = document.getElementById('cart-items');
                if(cartEl) cartEl.scrollTop = cartEl.scrollHeight;
@@ -952,10 +1009,12 @@
             }
         }
 
+        // ================= WAITING ORDERS (ADMIN) =================
         function renderWaitingOrders() {
             const container = document.getElementById('waiting-order-grid');
             if (!container) return;
             
+            // Filter: Hanya tampilkan yang FulfillmentStatus-nya WAITING
             const waitingOrders = state.history.filter(t => t.fulfillmentStatus === 'WAITING');
 
             if (waitingOrders.length === 0) {
@@ -984,6 +1043,7 @@
                     <i class="ph-fill ph-check-circle text-base pointer-events-none"></i> Tandai Selesai
                 </button>`;
 
+                // LOGIKA UNTUK QRIS PAYMENT
                 if (t.status === 'VOID' || t.paymentStatus === 'EXPIRED') {
                     cardClass = "bg-red-50 rounded-2xl shadow-sm border border-red-300";
                     headerClass = "bg-red-100/70 border-b border-red-200";
@@ -992,7 +1052,7 @@
                     buttonHtml = `<button type="button" onclick="window.archiveOrder('${t.id}')" class="w-full py-2.5 md:py-3 bg-red-500 hover:bg-red-600 text-white rounded-xl font-bold text-xs md:text-sm flex justify-center items-center gap-2 transition-transform active:scale-[0.98] shadow-sm">
                         <i class="ph-bold ph-trash text-base pointer-events-none"></i> Hapus dari Antrean
                     </button>`;
-                } else if (t.paymentMethod === 'QRIS / Transfer') {
+                } else if (t.paymentMethod === 'QRIS' || t.paymentMethod === 'QRIS / Transfer') {
                     if (t.paymentStatus === 'UNPAID') {
                         badgeHtml = '<span class="px-2 py-1 bg-blue-100 text-blue-600 text-[8px] md:text-[9px] font-bold rounded uppercase tracking-wider whitespace-nowrap">Menunggu QRIS</span>';
                         paymentDesc = '<p class="text-[10px] text-blue-600 font-bold mt-1 animate-pulse"><i class="ph-bold ph-spinner-gap animate-spin"></i> Menunggu pelanggan scan QRIS...</p>';
@@ -1003,8 +1063,10 @@
                         badgeHtml = '<span class="px-2 py-1 bg-green-100 text-green-600 text-[8px] md:text-[9px] font-bold rounded uppercase tracking-wider whitespace-nowrap">QRIS Lunas</span>';
                         paymentDesc = '<p class="text-[10px] text-green-600 font-bold mt-1"><i class="ph-bold ph-check-circle"></i> Pembayaran QRIS berhasil diterima.</p>';
                     }
-                } else if (t.paymentMethod === 'Cash') { 
-                    paymentDesc = '<p class="text-[10px] text-orange-600 font-bold mt-1"><i class="ph-bold ph-storefront"></i> Pembayaran Tunai (Bayar di Kasir).</p>';
+                } else if (t.paymentMethod === 'Cash') {
+                     paymentDesc = '<p class="text-[10px] text-orange-600 font-bold mt-1"><i class="ph-bold ph-storefront"></i> Pembayaran Tunai (Kasir).</p>';
+                } else if (t.paymentMethod === 'Card') {
+                     paymentDesc = '<p class="text-[10px] text-purple-600 font-bold mt-1"><i class="ph-bold ph-credit-card"></i> Pembayaran Kartu (Kasir).</p>';
                 }
 
                 return `
@@ -1027,7 +1089,8 @@
 
         window.completeOrder = async (id) => {
             window.playHaptic();
-            if(!confirm(`Tandai pesanan ini sebagai SELESAI?`)) return;
+            const isOk = await window.customConfirm("Tandai pesanan ini sebagai SELESAI?");
+            if(!isOk) return;
             try { await publicDbRef('history').doc(id).update({ fulfillmentStatus: 'DONE' }); window.showNotification("Pesanan selesai!"); } 
             catch (err) { window.showNotification("Gagal update status pesanan", "error"); }
         };
@@ -1100,6 +1163,7 @@
             }).join('');
         }
 
+        // ================= HISTORY TABLE =================
         function renderHistoryTable() {
             document.getElementById('history-table-body').innerHTML = state.history.map(t => {
                 const isVoid = t.status === 'VOID';
@@ -1144,19 +1208,13 @@
             }).join('');
         }
 
-        window.reprintTransaction = (id) => { 
-            window.playHaptic(); 
-            const trx = state.history.find(t => String(t.id) === String(id)); 
-            if(trx) {
-                state.currentTransaction = trx;
-                openReceipt(trx); 
-            }
-        };
+        window.reprintTransaction = (id) => { window.playHaptic(); const trx = state.history.find(t => String(t.id) === String(id)); if(trx) openReceipt(trx); };
 
         window.voidTransaction = async (id) => {
             window.playHaptic(); const trx = state.history.find(t => String(t.id) === String(id));
             if(!trx || trx.status === 'VOID') return;
-            if(!confirm(`Yakin ingin melakukan VOID pada transaksi ${id}?\nTransaksi akan ditandai batal dan stok produk akan dikembalikan.`)) return;
+            const isOk = await window.customConfirm(`Yakin ingin membatalkan (VOID) transaksi ${id}?\n\nStok produk akan dikembalikan.`);
+            if(!isOk) return;
 
             try {
                 for (const item of trx.items) {
@@ -1169,7 +1227,7 @@
 
         window.closeModals = () => {
             window.playHaptic();
-            ['modal-product', 'modal-category', 'modal-addon-group', 'modal-voucher', 'modal-checkout', 'modal-receipt', 'modal-addon-select', 'modal-qris-payment'].forEach(id => {
+            ['modal-product', 'modal-category', 'modal-addon-group', 'modal-voucher', 'modal-checkout', 'modal-receipt', 'modal-addon-select', 'modal-qris-payment', 'modal-confirm'].forEach(id => {
                 const el = document.getElementById(id); if(el) el.style.display = 'none';
             });
             if (state.qrisPollingInterval) { clearInterval(state.qrisPollingInterval); state.qrisPollingInterval = null; }
@@ -1187,19 +1245,24 @@
 
         window.openProductForm = () => {
             window.playHaptic(); document.getElementById('modal-product-title').innerText = "Tambah Menu"; document.getElementById('prod-id').value = '';
-            document.getElementById('prod-name').value = ''; document.getElementById('prod-price').value = ''; document.getElementById('prod-stock').value = ''; document.getElementById('prod-image').value = '';
+            document.getElementById('prod-name').value = ''; 
+            document.getElementById('prod-category').value = '';
+            document.getElementById('prod-price').value = ''; document.getElementById('prod-stock').value = ''; document.getElementById('prod-image').value = '';
             renderProductAddonGroupCheckboxes([]); document.getElementById('modal-product').style.display = 'flex';
         };
 
         window.editProduct = (id) => {
             window.playHaptic();
             try {
-                const p = state.products.find(x => String(x.id) === String(id).trim()); if(!p) return alert("Error: Produk tidak ditemukan.");
+                const p = state.products.find(x => String(x.id) === String(id).trim()); 
+                if(!p) { window.showNotification("Error: Produk tidak ditemukan.", "error"); return; }
                 document.getElementById('modal-product-title').innerText = "Edit Menu"; document.getElementById('prod-id').value = p.id;
-                document.getElementById('prod-name').value = p.name; document.getElementById('prod-category').value = p.category; document.getElementById('prod-price').value = p.price;
+                document.getElementById('prod-name').value = p.name; 
+                document.getElementById('prod-category').value = p.category || ''; 
+                document.getElementById('prod-price').value = p.price;
                 document.getElementById('prod-stock').value = p.stock; document.getElementById('prod-image').value = p.image || '';
                 renderProductAddonGroupCheckboxes(p.addonGroupIds || []); document.getElementById('modal-product').style.display = 'flex';
-            } catch(e) { console.error(e); alert("Terjadi kesalahan."); }
+            } catch(e) { console.error(e); window.showNotification("Terjadi kesalahan.", "error"); }
         };
 
         window.submitProductForm = async (e) => {
@@ -1217,21 +1280,35 @@
             catch (err) { window.showNotification("Gagal menyimpan", "error"); }
         };
 
-        window.deleteProduct = async (id) => { window.playHaptic(); if(!confirm("Yakin ingin menghapus menu ini?")) return; try { await publicDbRef('products').doc(id).delete(); window.showNotification("Menu dihapus"); } catch (err) { window.showNotification("Gagal", "error"); } };
+        window.deleteProduct = async (id) => { 
+            window.playHaptic(); 
+            const isOk = await window.customConfirm("Yakin ingin menghapus menu ini?");
+            if(!isOk) return; 
+            try { await publicDbRef('products').doc(id).delete(); window.showNotification("Menu dihapus"); } catch (err) { window.showNotification("Gagal", "error"); } 
+        };
+        
         window.openCategoryForm = () => { window.playHaptic(); document.getElementById('modal-category-title').innerText = "Tambah Kategori"; document.getElementById('cat-id').value = ''; document.getElementById('cat-name').value = ''; document.getElementById('modal-category').style.display = 'flex'; };
+        
         window.editCategory = (id) => {
             window.playHaptic();
             try {
-                const c = state.categories.find(x => String(x.id) === String(id).trim()); if(!c) return alert("Error: Kategori tidak ditemukan.");
+                const c = state.categories.find(x => String(x.id) === String(id).trim()); if(!c) return window.showNotification("Error: Kategori tidak ditemukan.", "error");
                 document.getElementById('modal-category-title').innerText = "Edit Kategori"; document.getElementById('cat-id').value = c.id; document.getElementById('cat-name').value = c.name; document.getElementById('modal-category').style.display = 'flex';
             } catch(e) {}
         };
+        
         window.submitCategoryForm = async (e) => {
             e.preventDefault(); window.playHaptic(); if(state.isOfflineMode) return window.showNotification("Offline mode", "error");
             const id = document.getElementById('cat-id').value || `cat_${Date.now()}`;
             try { await publicDbRef('categories').doc(id).set({ id: id, name: document.getElementById('cat-name').value }); window.showNotification("Kategori disimpan!"); window.closeModals(); } catch (err) {}
         };
-        window.deleteCategory = async (id) => { window.playHaptic(); if(!confirm("Yakin ingin menghapus kategori ini?")) return; try { await publicDbRef('categories').doc(id).delete(); window.showNotification("Kategori dihapus"); } catch (err) {} };
+        
+        window.deleteCategory = async (id) => { 
+            window.playHaptic(); 
+            const isOk = await window.customConfirm("Yakin ingin menghapus kategori ini?");
+            if(!isOk) return; 
+            try { await publicDbRef('categories').doc(id).delete(); window.showNotification("Kategori dihapus"); } catch (err) {} 
+        };
 
         window.addOptionRow = (name = '', price = 0) => {
             window.playHaptic(); const div = document.createElement('div'); div.className = "flex gap-2 mb-2 option-row items-center";
@@ -1241,25 +1318,36 @@
                 <button type="button" onclick="this.parentElement.remove(); window.playHaptic();" class="p-2.5 text-red-500 hover:bg-red-50 rounded-xl active:scale-90 transition-transform"><i class="ph-bold ph-trash pointer-events-none"></i></button>`;
             document.getElementById('addon-options-container').appendChild(div);
         };
+        
         window.openAddonGroupForm = () => { window.playHaptic(); document.getElementById('modal-addon-title').innerText = "Tambah Grup Add-on"; document.getElementById('addon-group-id').value = ''; document.getElementById('addon-group-name').value = ''; document.getElementById('addon-group-type').value = 'single'; document.getElementById('addon-options-container').innerHTML = ''; window.addOptionRow(); document.getElementById('modal-addon-group').style.display = 'flex'; };
+        
         window.editAddonGroup = (id) => {
             window.playHaptic();
             try {
-                const ag = state.addonGroups.find(x => String(x.id) === String(id).trim()); if(!ag) return alert("Error: Grup Add-on tidak ditemukan.");
+                const ag = state.addonGroups.find(x => String(x.id) === String(id).trim()); if(!ag) return window.showNotification("Grup Add-on tidak ditemukan.", "error");
                 document.getElementById('modal-addon-title').innerText = "Edit Grup Add-on"; document.getElementById('addon-group-id').value = ag.id; document.getElementById('addon-group-name').value = ag.name; document.getElementById('addon-group-type').value = ag.type;
                 const container = document.getElementById('addon-options-container'); container.innerHTML = '';
                 ag.options.forEach(opt => { window.addOptionRow(opt.name, opt.price); }); document.getElementById('modal-addon-group').style.display = 'flex';
             } catch(e) {}
         };
+        
         window.submitAddonGroupForm = async (e) => {
             e.preventDefault(); window.playHaptic(); if(state.isOfflineMode) return window.showNotification("Offline mode", "error");
-            const rows = document.querySelectorAll('.option-row'); if(rows.length === 0) return alert('Silakan tambahkan minimal 1 Pilihan Opsi!');
+            const rows = document.querySelectorAll('.option-row'); 
+            if(rows.length === 0) { window.showNotification('Tambahkan minimal 1 Opsi!', "error"); return; }
             const options = Array.from(rows).map(row => ({ name: row.querySelector('.opt-name').value.trim(), price: parseInt(row.querySelector('.opt-price').value) || 0 })).filter(opt => opt.name !== '');
-            if(options.length === 0) return alert('Pilihan Opsi tidak boleh kosong!');
+            if(options.length === 0) { window.showNotification('Pilihan Opsi kosong!', "error"); return; }
+            
             const id = document.getElementById('addon-group-id').value || `ag_${Date.now()}`;
             try { await publicDbRef('addonGroups').doc(id).set({ id: id, name: document.getElementById('addon-group-name').value, type: document.getElementById('addon-group-type').value, options: options }); window.showNotification("Grup Add-on disimpan!"); window.closeModals(); } catch (err) {}
         };
-        window.deleteAddonGroup = async (id) => { window.playHaptic(); if(!confirm("Yakin ingin menghapus Grup Add-on ini?")) return; try { await publicDbRef('addonGroups').doc(id).delete(); window.showNotification("Grup Add-on dihapus"); } catch (err) {} };
+        
+        window.deleteAddonGroup = async (id) => { 
+            window.playHaptic(); 
+            const isOk = await window.customConfirm("Yakin ingin menghapus Grup Add-on ini?");
+            if(!isOk) return; 
+            try { await publicDbRef('addonGroups').doc(id).delete(); window.showNotification("Grup Add-on dihapus"); } catch (err) {} 
+        };
 
         // --- VOUCHERS LOGIC ---
         window.openVoucherForm = () => {
@@ -1283,7 +1371,7 @@
             e.preventDefault(); window.playHaptic();
             if(state.isOfflineMode) return window.showNotification("Offline mode", "error");
             const code = document.getElementById('voucher-code').value.trim().toUpperCase();
-            if(!code) return alert("Kode voucher wajib diisi");
+            if(!code) { window.showNotification("Kode voucher wajib diisi", "error"); return; }
             const id = document.getElementById('voucher-id').value || `vch_${Date.now()}`;
             const data = {
                 id: id, code: code, discountPercent: parseInt(document.getElementById('voucher-discount').value) || 0,
@@ -1292,20 +1380,29 @@
             try { await publicDbRef('vouchers').doc(id).set(data); window.showNotification("Voucher disimpan!"); window.closeModals(); } catch (err) { window.showNotification("Gagal menyimpan", "error"); }
         };
 
-        window.deleteVoucher = async (id) => { window.playHaptic(); if(!confirm("Yakin ingin menghapus voucher ini?")) return; try { await publicDbRef('vouchers').doc(id).delete(); window.showNotification("Voucher dihapus"); } catch (err) { window.showNotification("Gagal", "error"); } };
+        window.deleteVoucher = async (id) => { 
+            window.playHaptic(); 
+            const isOk = await window.customConfirm("Yakin ingin menghapus voucher ini?");
+            if(!isOk) return; 
+            try { await publicDbRef('vouchers').doc(id).delete(); window.showNotification("Voucher dihapus"); } catch (err) { window.showNotification("Gagal", "error"); } 
+        };
 
         window.toggleVoucherStatus = async (id, newStatus) => { window.playHaptic(); try { await publicDbRef('vouchers').doc(id).update({ isActive: newStatus }); } catch (err) { window.showNotification("Gagal ubah status", "error"); } };
+
 
         window.openCheckout = () => {
             window.playHaptic();
             try {
-                if(state.cart.length === 0) return alert("Keranjang kosong!");
+                if(state.cart.length === 0) {
+                    window.showNotification("Keranjang kosong!", "error");
+                    return;
+                }
                 state.currentDiscount = 0; state.appliedVoucherId = null;
                 document.getElementById('checkout-voucher-code').value = ''; document.getElementById('btn-clear-voucher').classList.add('hidden');
                 window.updateCheckoutTotalDisplay();
                 document.getElementById('cash-amount').value = ''; document.getElementById('checkout-customer').value = ''; document.getElementById('checkout-notes').value = ''; 
                 window.setPaymentMethod('Cash'); document.getElementById('modal-checkout').style.display = 'flex';
-            } catch (error) { console.error(error); alert("Terjadi kendala saat membuka form pembayaran."); }
+            } catch (error) { console.error(error); window.showNotification("Kendala membuka form.", "error"); }
         };
 
         window.updateCheckoutTotalDisplay = () => {
@@ -1375,7 +1472,7 @@
         async function createQrisPayment(totalAmount, bookingCode, customerName, transactionData) {
             try {
                 if (totalAmount <= 0) {
-                    alert("Total pembayaran tidak boleh Rp 0 untuk metode QRIS.");
+                    window.showNotification("Total QRIS tidak boleh Rp 0", "error");
                     return false;
                 }
                 const veloRes = await fetch(`${VELO_BASE_URL}/payments`, {
@@ -1400,10 +1497,10 @@
                     
                     return true;
                 } else {
-                    alert("Gagal memuat QRIS: " + (veloData.message || 'Unknown error'));
+                    window.showNotification("Gagal memuat QRIS: " + (veloData.message || 'Unknown error'), "error");
                     return false;
                 }
-            } catch(e) { alert("Terjadi kendala jaringan ke server QRIS."); return false; }
+            } catch(e) { window.showNotification("Kendala jaringan QRIS.", "error"); return false; }
         }
 
         window.checkQrisStatus = async (isManual = false) => {
@@ -1424,7 +1521,7 @@
                         await finalizeTransactionFirebase(state.currentTransaction);
                     } else if (statusVal === 'EXPIRED') {
                         if(state.qrisPollingInterval) clearInterval(state.qrisPollingInterval);
-                        alert("Waktu pembayaran QRIS habis.");
+                        window.showNotification("Waktu QRIS habis.", "error");
                         window.cancelQrisPayment();
                     } else {
                         if (isManual) window.showNotification("Belum ada pembayaran", "error");
@@ -1443,52 +1540,71 @@
 
         window.processCheckout = async () => {
             window.playHaptic();
-            let subtotal = 0; state.cart.forEach(item => { subtotal += (getCartItemUnitPrice(item) * Number(item.quantity)); });
-            let total = subtotal - state.currentDiscount; if (total < 0) total = 0;
-            let paymentAmount = total;
-
-            if (state.paymentMethod === 'Cash') {
-                const cashInput = document.getElementById('cash-amount').value.replace(/[^0-9]/g, '');
-                paymentAmount = parseInt(cashInput) || 0;
-                if (paymentAmount < total) return alert("Uang tunai kurang dari tagihan!");
-            }
-
-            const transactionCustomer = document.getElementById('checkout-customer').value.trim(); 
-            const transactionNotes = document.getElementById('checkout-notes').value.trim(); 
-
-            const transactionId = `TRX-${Date.now()}`;
-            const bookingCode = transactionId.slice(-5).toUpperCase();
-
-            const transaction = {
-                id: transactionId, bookingCode: bookingCode,
-                date: new Date().toISOString(), items: state.cart,
-                subtotal: subtotal, discount: state.currentDiscount, tax: 0, total: total,
-                paymentMethod: state.paymentMethod, paymentAmount: paymentAmount,
-                change: state.paymentMethod === 'Cash' ? paymentAmount - total : 0,
-                status: 'SUCCESS', fulfillmentStatus: 'WAITING', 
-                customerName: transactionCustomer, notes: transactionNotes 
-            };
-
-            const btn = document.getElementById('btn-process-checkout');
-
-            if (state.paymentMethod === 'QRIS') {
-                if(btn) { btn.innerHTML = `<i class="ph-bold ph-spinner-gap animate-spin text-lg md:text-2xl"></i> Memuat QRIS...`; btn.disabled = true; }
-                
-                const success = await createQrisPayment(total, bookingCode, transactionCustomer, transaction);
-                
-                if(btn) { btn.innerHTML = `<i class="ph-fill ph-check-circle text-lg md:text-2xl pointer-events-none"></i> Proses Pembayaran`; btn.disabled = false; }
-                
-                if (success) {
-                    document.getElementById('qris-total-view').innerText = formatRp(total);
-                    document.getElementById('modal-qris-payment').style.display = 'flex'; 
-                    state.qrisPollingInterval = setInterval(() => window.checkQrisStatus(false), 5000); 
+            try {
+                if(state.cart.length === 0) {
+                    window.showNotification("Keranjang kosong!", "error");
+                    return;
                 }
-                return; 
-            }
 
-            if(btn) { btn.innerHTML = `<i class="ph-bold ph-spinner-gap animate-spin text-lg md:text-2xl"></i> Memproses...`; btn.disabled = true; }
-            await finalizeTransactionFirebase(transaction);
-            if(btn) { btn.innerHTML = `<i class="ph-fill ph-check-circle text-lg md:text-2xl pointer-events-none"></i> Proses Pembayaran`; btn.disabled = false; }
+                let subtotal = 0; state.cart.forEach(item => { subtotal += (getCartItemUnitPrice(item) * Number(item.quantity)); });
+                let total = subtotal - state.currentDiscount; if (total < 0) total = 0;
+                let paymentAmount = total;
+
+                if (state.paymentMethod === 'Cash') {
+                    const cashInput = document.getElementById('cash-amount').value.replace(/[^0-9]/g, '');
+                    paymentAmount = parseInt(cashInput) || 0;
+                    if (paymentAmount < total) {
+                        window.showNotification("Uang tunai kurang dari tagihan!", "error");
+                        return;
+                    }
+                }
+
+                const transactionCustomer = document.getElementById('checkout-customer').value.trim(); 
+                const transactionNotes = document.getElementById('checkout-notes').value.trim(); 
+
+                const transactionId = `TRX-${Date.now()}`;
+                const bookingCode = transactionId.slice(-5).toUpperCase();
+
+                // Status bayar awal sesuai metode
+                const initialPaymentStatus = state.paymentMethod === 'QRIS' ? 'UNPAID' : 'PAID';
+
+                const transaction = {
+                    id: transactionId, bookingCode: bookingCode,
+                    date: new Date().toISOString(), items: state.cart,
+                    subtotal: subtotal, discount: state.currentDiscount, tax: 0, total: total,
+                    paymentMethod: state.paymentMethod, paymentAmount: paymentAmount,
+                    change: state.paymentMethod === 'Cash' ? paymentAmount - total : 0,
+                    status: 'SUCCESS', fulfillmentStatus: 'WAITING', 
+                    paymentStatus: initialPaymentStatus,
+                    customerName: transactionCustomer, notes: transactionNotes 
+                };
+
+                const btn = document.getElementById('btn-process-checkout');
+
+                if (state.paymentMethod === 'QRIS') {
+                    if(btn) { btn.innerHTML = `<i class="ph-bold ph-spinner-gap animate-spin text-lg md:text-2xl"></i> Memuat QRIS...`; btn.disabled = true; }
+                    
+                    const success = await createQrisPayment(total, bookingCode, transactionCustomer, transaction);
+                    
+                    if(btn) { btn.innerHTML = `<i class="ph-fill ph-check-circle text-lg md:text-2xl pointer-events-none"></i> Proses Pembayaran`; btn.disabled = false; }
+                    
+                    if (success) {
+                        document.getElementById('qris-total-view').innerText = formatRp(total);
+                        document.getElementById('modal-qris-payment').style.display = 'flex'; 
+                        state.qrisPollingInterval = setInterval(() => window.checkQrisStatus(false), 5000); 
+                    }
+                    return; 
+                }
+
+                if(btn) { btn.innerHTML = `<i class="ph-bold ph-spinner-gap animate-spin text-lg md:text-2xl"></i> Memproses...`; btn.disabled = true; }
+                await finalizeTransactionFirebase(transaction);
+                if(btn) { btn.innerHTML = `<i class="ph-fill ph-check-circle text-lg md:text-2xl pointer-events-none"></i> Proses Pembayaran`; btn.disabled = false; }
+            } catch (error) {
+                console.error(error);
+                window.showNotification("Terjadi kesalahan saat memproses", "error");
+                const btn = document.getElementById('btn-process-checkout');
+                if(btn) { btn.innerHTML = `<i class="ph-fill ph-check-circle text-lg md:text-2xl pointer-events-none"></i> Proses Pembayaran`; btn.disabled = false; }
+            }
         };
 
         async function finalizeTransactionFirebase(transaction) {
@@ -1521,17 +1637,189 @@
                 window.clearCart(); 
                 window.closeModals(); 
                 openReceipt(transaction);
-
-                // --- AUTO PRINT: Otomatis mencetak setelah checkout berhasil jika Printer Bluetooth nyala ---
-                if (state.printerDevice && state.printerDevice.gatt.connected) {
-                    setTimeout(() => window.printReceipt(), 500);
-                }
-
             } catch (err) { 
                 console.error(err);
                 window.showNotification("Gagal simpan transaksi", "error"); 
             }
         }
+
+        // ================= BLUETOOTH ESC/POS LOGIC =================
+        window.connectBluetooth = async () => {
+            window.playHaptic();
+            try {
+                // Request bluetooth device. Filter by typical POS printer UUIDs.
+                // 18f0 is commonly used by many generic thermal printers, e7810a71... by others like some Iware models
+                const device = await navigator.bluetooth.requestDevice({
+                    filters: [{ services: ['000018f0-0000-1000-8000-00805f9b34fb'] }],
+                    optionalServices: ['e7810a71-73ae-499d-8c15-faa9aef0c3f2', '49535343-fe7d-4ae5-8fa9-9fafd205e455']
+                }).catch(e => {
+                    // Fallback to accept all if the specific filter isn't met
+                    return navigator.bluetooth.requestDevice({
+                        acceptAllDevices: true,
+                        optionalServices: ['000018f0-0000-1000-8000-00805f9b34fb', 'e7810a71-73ae-499d-8c15-faa9aef0c3f2', '49535343-fe7d-4ae5-8fa9-9fafd205e455']
+                    });
+                });
+
+                const signalName = device.name || 'Printer Kasir';
+                window.showNotification("Menghubungkan ke " + signalName + "...");
+                
+                state.printerDevice = device;
+                const server = await device.gatt.connect();
+                state.printerServer = server;
+
+                // Trying to find a characteristic we can write to
+                const services = await server.getPrimaryServices();
+                let characteristic = null;
+
+                for (const service of services) {
+                    const characteristics = await service.getCharacteristics();
+                    for (const char of characteristics) {
+                        if (char.properties.write || char.properties.writeWithoutResponse) {
+                            characteristic = char;
+                            break;
+                        }
+                    }
+                    if (characteristic) break;
+                }
+
+                if (!characteristic) {
+                    throw new Error("Tidak menemukan akses (characteristic) untuk mencetak pada printer ini.");
+                }
+
+                state.printerCharacteristic = characteristic;
+
+                document.getElementById('printer-status').innerText = `Terhubung`;
+                document.getElementById('printer-status').classList.replace('text-gray-500', 'text-green-600');
+                document.getElementById('printer-status').classList.add('font-bold');
+                
+                document.getElementById('printer-device-name').innerText = `Perangkat: ${signalName}`;
+                document.getElementById('printer-device-name').classList.remove('hidden');
+                document.getElementById('printer-icon').classList.replace('text-gray-400', 'text-green-500');
+                
+                window.showNotification(`Berhasil terhubung ke: ${signalName}`);
+
+            } catch (err) {
+                console.error("Bluetooth connect error:", err);
+                window.showNotification('Gagal koneksi Bluetooth: ' + err.message, 'error');
+            }
+        };
+
+        window.printReceipt = async () => {
+            window.playHaptic();
+            const trx = state.currentTransaction;
+            if (!trx) return;
+
+            // Jika Bluetooth Printer terhubung, gunakan ESC/POS!
+            if (state.printerDevice && state.printerDevice.gatt.connected && state.printerCharacteristic) {
+                try {
+                    window.showNotification("Mengirim data struk ke printer...");
+
+                    let encoder = new TextEncoder();
+                    let buffer = [];
+                    const add = (arr) => buffer.push(...arr);
+                    const addText = (text) => add(encoder.encode(text));
+
+                    // --- ESC/POS COMMANDS ---
+                    // 1. Initialize Printer
+                    add([0x1B, 0x40]); 
+                    
+                    // 2. Rata Tengah & Bold untuk Nama Toko
+                    add([0x1B, 0x61, 1]); // Align Center
+                    add([0x1B, 0x45, 1]); // Bold On
+                    addText(state.posName + '\n');
+                    
+                    add([0x1B, 0x45, 0]); // Bold Off
+                    addText("Struk Pembayaran\n");
+                    addText("--------------------------------\n"); // 32 Character standard untuk kertas 58mm
+
+                    // 3. Rata Kiri untuk Detail
+                    add([0x1B, 0x61, 0]); // Align Left
+                    addText(`No   : ${trx.bookingCode || trx.id.slice(-5)}\n`);
+                    addText(`Tgl  : ${new Date(trx.date).toLocaleString('id-ID', {day:'2-digit', month:'2-digit', year:'2-digit', hour:'2-digit', minute:'2-digit'})}\n`);
+                    if(trx.customerName) addText(`Nama : ${trx.customerName}\n`);
+                    addText(`Tipe : ${trx.paymentMethod}\n`);
+                    addText("--------------------------------\n");
+
+                    // 4. Daftar Item
+                    trx.items.forEach(item => {
+                        const up = getCartItemUnitPrice(item);
+                        addText(`${item.product.name}\n`);
+                        if(item.addons && item.addons.length > 0) {
+                            item.addons.forEach(a => addText(`  - ${a.name} (+${a.price})\n`));
+                        }
+                        
+                        let line2 = `${item.quantity} x ${formatRp(up)}`;
+                        let totalStr = formatRp(item.quantity * up);
+                        // Hitung spasi agar lurus kanan
+                        let spaces = 32 - line2.length - totalStr.length;
+                        if(spaces < 1) spaces = 1;
+                        addText(line2 + ' '.repeat(spaces) + totalStr + '\n');
+                    });
+
+                    addText("--------------------------------\n");
+                    
+                    // 5. Rangkuman Pembayaran
+                    let subStr = `Subtotal:`;
+                    let subVal = formatRp(trx.subtotal);
+                    addText(subStr + ' '.repeat(Math.max(1, 32 - subStr.length - subVal.length)) + subVal + '\n');
+
+                    if (trx.discount > 0) {
+                        let discStr = `Diskon:`;
+                        let discVal = `-${formatRp(trx.discount)}`;
+                        addText(discStr + ' '.repeat(Math.max(1, 32 - discStr.length - discVal.length)) + discVal + '\n');
+                    }
+
+                    add([0x1B, 0x45, 1]); // Bold On
+                    let totStr = `TOTAL:`;
+                    let totVal = formatRp(trx.total);
+                    addText(totStr + ' '.repeat(Math.max(1, 32 - totStr.length - totVal.length)) + totVal + '\n');
+                    add([0x1B, 0x45, 0]); // Bold Off
+
+                    if (trx.paymentMethod === 'Cash') {
+                        let cashStr = `Tunai:`;
+                        let cashVal = formatRp(trx.paymentAmount);
+                        addText(cashStr + ' '.repeat(Math.max(1, 32 - cashStr.length - cashVal.length)) + cashVal + '\n');
+                        
+                        let changeStr = `Kembali:`;
+                        let changeVal = formatRp(trx.change);
+                        addText(changeStr + ' '.repeat(Math.max(1, 32 - changeStr.length - changeVal.length)) + changeVal + '\n');
+                    }
+
+                    addText("--------------------------------\n");
+                    add([0x1B, 0x61, 1]); // Align Center
+                    
+                    if (trx.notes && trx.notes.trim() !== '') {
+                        addText(`Catatan:\n${trx.notes}\n`);
+                        addText("--------------------------------\n");
+                    }
+
+                    addText("Terima Kasih Atas\nKunjungan Anda!\n");
+                    addText("\n\n\n\n"); // Feed Kertas
+
+                    // 6. Tembakkan ByteArray ke Printer dengan cara dipecah (Chunk)
+                    const CHUNK_SIZE = 50; 
+                    for (let i = 0; i < buffer.length; i += CHUNK_SIZE) {
+                        const chunk = new Uint8Array(buffer.slice(i, i + CHUNK_SIZE));
+                        await state.printerCharacteristic.writeValue(chunk);
+                        // Delay tipis agar buffer printer tidak kepenuhan / tumpang tindih
+                        await new Promise(r => setTimeout(r, 20)); 
+                    }
+                    
+                    window.showNotification("Struk berhasil dicetak di printer kasir!");
+
+                } catch (error) {
+                    console.error("Print Error:", error);
+                    window.showNotification("Gagal mencetak Bluetooth, dialihkan ke web...", "error");
+                    // Jika Bluetooth error saat proses cetak, paksa fallback
+                    window.print();
+                }
+            } else {
+                // FALLBACK: Jika Bluetooth tidak konek, gunakan web print native (PDF)
+                window.print(); 
+            }
+        };
+
+        window.saveSettings = async (e) => { e.preventDefault(); window.playHaptic(); try { await publicDbRef('settings').doc('general').set({ posName: document.getElementById('input-pos-name').value }); window.showNotification("Nama POS diperbarui!"); } catch (err) {} };
 
         function openReceipt(trx) {
             document.getElementById('receipt-pos-name').innerText = state.posName;
@@ -1562,168 +1850,6 @@
             document.getElementById('receipt-summary').innerHTML = summaryHTML;
             document.getElementById('modal-receipt').style.display = 'flex';
         }
-
-        window.saveSettings = async (e) => { e.preventDefault(); window.playHaptic(); try { await publicDbRef('settings').doc('general').set({ posName: document.getElementById('input-pos-name').value }); window.showNotification("Nama POS diperbarui!"); } catch (err) {} };
-
-        // --- BLUETOOTH PRINTER LOGIC FIX ---
-        const BT_SERVICES = [
-            '000018f0-0000-1000-8000-00805f9b34fb', // Generik POS
-            'e7810a71-73ae-499d-8c15-faa9aef0c3f2', // Iware / Panda / Beberapa seri murah
-            '49535343-fe7d-4ae5-8fa9-9fafd205e455', // BLE SPP Serial
-            '0000fee7-0000-1000-8000-00805f9b34fb'  // Generik 2
-        ];
-
-        window.connectBluetooth = async () => {
-            window.playHaptic();
-            try {
-                if (!navigator.bluetooth) throw new Error("Browser Anda tidak mendukung Web Bluetooth. Gunakan Chrome di Android/PC.");
-
-                const device = await navigator.bluetooth.requestDevice({ 
-                    acceptAllDevices: true, 
-                    optionalServices: BT_SERVICES 
-                });
-
-                window.showNotification("Mencoba menghubungkan ke printer...");
-                const server = await device.gatt.connect();
-                let characteristic;
-
-                for (const uuid of BT_SERVICES) {
-                    try {
-                        const service = await server.getPrimaryService(uuid);
-                        const chars = await service.getCharacteristics();
-                        characteristic = chars.find(c => c.properties.write || c.properties.writeWithoutResponse);
-                        if (characteristic) break;
-                    } catch (e) { console.log('Bukan service:', uuid); }
-                }
-
-                if (!characteristic) throw new Error("Tidak menemukan karakteristik Write pada printer ini. Pastikan ini printer thermal kasir.");
-
-                state.printerDevice = device;
-                state.printerServer = server;
-                state.printerCharacteristic = characteristic;
-                
-                const signalName = device.name || 'Printer Kasir';
-                document.getElementById('printer-status').innerText = `Terhubung`; 
-                document.getElementById('printer-device-name').innerText = `Perangkat: ${signalName}`; 
-                document.getElementById('printer-device-name').classList.remove('hidden'); 
-                document.getElementById('printer-icon').classList.replace('text-gray-400', 'text-green-500');
-                window.showNotification(`Berhasil terhubung ke: ${signalName}`);
-                
-                device.addEventListener('gattserverdisconnected', () => {
-                    state.printerDevice = null; state.printerServer = null; state.printerCharacteristic = null;
-                    document.getElementById('printer-status').innerText = `Terputus`; 
-                    document.getElementById('printer-device-name').classList.add('hidden'); 
-                    document.getElementById('printer-icon').classList.replace('text-green-500', 'text-gray-400');
-                    window.showNotification('Koneksi printer terputus', 'error');
-                });
-            } catch (err) { window.showNotification('Gagal koneksi printer: ' + err.message, 'error'); }
-        };
-
-        // Fungsi ini mengconvert data transaksi ke format RAW Binary Printer (ESC/POS)
-        window.generateESCpos = (trx) => {
-            let esc = [];
-            
-            const encodeText = (text) => {
-                return Array.from(text).map(c => {
-                    let code = c.charCodeAt(0);
-                    return code > 255 ? 63 : code; // Strip karakter non-ascii
-                });
-            };
-
-            esc.push(0x1B, 0x40); // ESC @ : Initialize printer
-            esc.push(0x1B, 0x61, 0x01); // Align Center
-            
-            esc.push(0x1B, 0x45, 0x01); // Bold On
-            esc.push(...encodeText(state.posName + '\n'));
-            esc.push(0x1B, 0x45, 0x00); // Bold Off
-            esc.push(...encodeText('Struk Pembayaran\n\n'));
-            
-            esc.push(0x1B, 0x61, 0x00); // Align Left
-            
-            const bcode = trx.bookingCode || trx.id.slice(-5).toUpperCase();
-            const dateStr = new Date(trx.date).toLocaleString('id-ID', {day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit'});
-            
-            esc.push(...encodeText(`No   : ${trx.id}\n`));
-            esc.push(...encodeText(`Kode : ${bcode}\n`));
-            esc.push(...encodeText(`Tgl  : ${dateStr}\n`));
-            if (trx.customerName) esc.push(...encodeText(`Nama : ${trx.customerName}\n`));
-            esc.push(...encodeText(`Tipe : ${trx.paymentMethod}\n`));
-            esc.push(...encodeText('--------------------------------\n'));
-            
-            trx.items.forEach(i => {
-                const unitPrice = getCartItemUnitPrice(i);
-                esc.push(...encodeText(`${i.product.name}\n`));
-                if (i.addons && i.addons.length > 0) {
-                    i.addons.forEach(a => {
-                        esc.push(...encodeText(` - ${a.name} ${a.price > 0 ? '(+'+formatRp(a.price)+')' : ''}\n`));
-                    });
-                }
-                
-                const qtyPrice = `${i.quantity} x ${formatRp(unitPrice)}`;
-                const totalLine = formatRp(i.quantity * unitPrice);
-                const spaces = 32 - qtyPrice.length - totalLine.length;
-                esc.push(...encodeText(qtyPrice + ' '.repeat(Math.max(1, spaces)) + totalLine + '\n'));
-            });
-            
-            esc.push(...encodeText('--------------------------------\n'));
-            
-            const subtotalStr = `Subtotal:`;
-            const subtotalVal = formatRp(trx.subtotal);
-            esc.push(...encodeText(subtotalStr + ' '.repeat(Math.max(1, 32 - subtotalStr.length - subtotalVal.length)) + subtotalVal + '\n'));
-            
-            if (trx.discount > 0) {
-                const discStr = `Diskon:`;
-                const discVal = `-${formatRp(trx.discount)}`;
-                esc.push(...encodeText(discStr + ' '.repeat(Math.max(1, 32 - discStr.length - discVal.length)) + discVal + '\n'));
-            }
-            
-            const totalStr = `TOTAL:`;
-            const totalVal = formatRp(trx.total);
-            esc.push(0x1B, 0x45, 0x01); // Bold on
-            esc.push(...encodeText(totalStr + ' '.repeat(Math.max(1, 32 - totalStr.length - totalVal.length)) + totalVal + '\n'));
-            esc.push(0x1B, 0x45, 0x00); // Bold off
-            
-            if (trx.paymentMethod === 'Cash') {
-                const tunaiStr = `Tunai:`;
-                const tunaiVal = formatRp(trx.paymentAmount);
-                esc.push(...encodeText(tunaiStr + ' '.repeat(Math.max(1, 32 - tunaiStr.length - tunaiVal.length)) + tunaiVal + '\n'));
-                
-                const kembaliStr = `Kembali:`;
-                const kembaliVal = formatRp(trx.change);
-                esc.push(...encodeText(kembaliStr + ' '.repeat(Math.max(1, 32 - kembaliStr.length - kembaliVal.length)) + kembaliVal + '\n'));
-            }
-            
-            if (trx.notes) { esc.push(...encodeText(`\nCatatan:\n${trx.notes}\n`)); }
-
-            esc.push(0x1B, 0x61, 0x01); // Align Center
-            esc.push(...encodeText('\nTerima Kasih Atas\nKunjungan Anda!\n\n\n\n\n'));
-            
-            return new Uint8Array(esc); // Kembalikan Array Binary Bytes
-        };
-
-        window.printReceipt = async () => {
-            window.playHaptic();
-            if (state.printerDevice && state.printerDevice.gatt.connected && state.printerCharacteristic) {
-                window.showNotification("Mencetak Struk ke Printer Bluetooth...", "success");
-                try {
-                    const data = window.generateESCpos(state.currentTransaction);
-                    // Kita harus mengirim data byte per byte dalam bentuk bongkahan (Chunks) ke printer.
-                    // Jika langsung dikirim semua, memori Bluetooth akan error. (Batas wajar BLE adalah 100 bytes per chunk).
-                    const CHUNK_SIZE = 100;
-                    for (let i = 0; i < data.length; i += CHUNK_SIZE) {
-                        const chunk = data.slice(i, i + CHUNK_SIZE);
-                        await state.printerCharacteristic.writeValue(chunk);
-                        await new Promise(r => setTimeout(r, 20)); // Delay antar bongkahan agar printer tidak ngelag
-                    }
-                } catch (error) {
-                    console.error("Print Error:", error);
-                    window.showNotification("Gagal mencetak Bluetooth: " + error.message, "error");
-                    window.print(); // Fallback PDF jika Bluetooth gagal
-                }
-            } else { 
-                window.print(); // Jika belum konek printer, lempar ke Print Browser Native
-            }
-        };
 
         initApp();
     </script>
