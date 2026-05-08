@@ -144,7 +144,7 @@
             </div>
 
             <!-- Right: Cart Sidebar -->
-            <div class="w-full lg:w-80 xl:w-96 h-[42EYHgEzWEdjJgYKAu8VjC4DohVYUMbvZ6Ua45MgSaYBTFv3725expKB69YsjM6Utj99E6Sn3LpcxQ4mNrwfrJLM5NGbWiQflex-col z-20 rounded-t-3xl lg:rounded-none border-t border-gray-100 lg:border-t-0 lg:border-l relative transition-transform">
+            <div class="w-full lg:w-80 xl:w-96 h-[42EYHgEzWEdjJgYKAu8VjC4DohVYUMbvZ6Ua45MgSaYBTFv3725expKB69YsjM6Utj99E6Sn3LpcxQ4mNrwfrJLM5NGbWiQlg:border-t-0 lg:border-l relative transition-transform">
                 <div class="p-4 md:p-5 border-b border-gray-100 flex justify-between items-center pt-5 md:pt-5">
                     <div class="absolute top-2 left-1/2 transform -translate-x-1/2 w-10 h-1.5 bg-gray-200 rounded-full lg:hidden"></div>
                     
@@ -197,9 +197,13 @@
             </div>
 
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 md:p-6 mb-6 md:mb-8">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-5 md:mb-6 gap-3 md:gap-4">
-                    <h2 class="text-sm md:text-lg font-bold flex items-center gap-2 text-gray-800"><i class="ph-fill ph-calendar-blank text-indigo-500"></i> Laporan Bulanan</h2>
-                    <input type="month" id="dash-month-filter" onchange="window.updateDashboardFilter(this.value)" class="p-2 border border-gray-300 rounded-lg text-xs md:text-base outline-none focus:border-indigo-500 w-full sm:w-auto bg-gray-50">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-5 md:mb-6 gap-3 md:gap-4 w-full">
+                    <h2 class="text-sm md:text-lg font-bold flex items-center gap-2 text-gray-800"><i class="ph-fill ph-calendar-blank text-indigo-500"></i> Laporan Transaksi</h2>
+                    <div class="flex items-center gap-2 w-full sm:w-auto">
+                        <input type="date" id="dash-start-date" onchange="window.updateDashboardFilter()" class="p-2 border border-gray-300 rounded-lg text-xs md:text-sm outline-none focus:border-indigo-500 w-full sm:w-auto bg-gray-50">
+                        <span class="text-gray-500 font-bold">-</span>
+                        <input type="date" id="dash-end-date" onchange="window.updateDashboardFilter()" class="p-2 border border-gray-300 rounded-lg text-xs md:text-sm outline-none focus:border-indigo-500 w-full sm:w-auto bg-gray-50">
+                    </div>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
                     <div class="p-3 md:p-4 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3 md:gap-4">
@@ -219,9 +223,18 @@
                 </div>
             </div>
 
-            <div class="bg-white rounded-2xl shadow-sm border p-4 md:p-6">
-                <h2 class="text-sm md:text-lg font-bold mb-3 md:mb-4 text-red-500 flex items-center gap-2"><i class="ph-fill ph-warning-circle"></i> Peringatan Stok Menipis</h2>
-                <div id="dash-low-stock" class="space-y-2 md:space-y-3"></div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
+                <!-- Peringatan Stok -->
+                <div class="bg-white rounded-2xl shadow-sm border p-4 md:p-6">
+                    <h2 class="text-sm md:text-lg font-bold mb-3 md:mb-4 text-red-500 flex items-center gap-2"><i class="ph-fill ph-warning-circle"></i> Peringatan Stok Menipis</h2>
+                    <div id="dash-low-stock" class="space-y-2 md:space-y-3"></div>
+                </div>
+
+                <!-- Menu Terlaris -->
+                <div class="bg-white rounded-2xl shadow-sm border p-4 md:p-6">
+                    <h2 class="text-sm md:text-lg font-bold mb-3 md:mb-4 text-indigo-600 flex items-center gap-2"><i class="ph-fill ph-trend-up"></i> Menu Terlaris (Periode Terpilih)</h2>
+                    <div id="dash-top-products" class="space-y-2 md:space-y-3"></div>
+                </div>
             </div>
         </div>
 
@@ -585,7 +598,7 @@
             <h2 class="text-lg md:text-2xl font-black text-gray-800 mb-1 mt-3 md:mt-2">Pembayaran QRIS</h2>
             <p class="text-[10px] md:text-sm text-gray-500 mb-5 md:mb-6">Scan kode QR ini menggunakan aplikasi E-Wallet pelanggan.</p>
             
-            <div class="w-42EYHgEzWEdjJgYKAu8VjC4DohVYUMbvZ6Ua45MgSaYBTFv3725expKB69YsjM6Utj99E6Sn3LpcxQ4mNrwfrJLM5NGbWiQ justify-center border-2 border-indigo-100 shadow-inner">
+            <div class="w-48 h-42EYHgEzWEdjJgYKAu8VjC4DohVYUMbvZ6Ua45MgSaYBTFv3725expKB69YsjM6Utj99E6Sn3LpcxQ4mNrwfrJLM5NGbWiQborder-indigo-100 shadow-inner">
                 <i id="qris-spinner" class="ph ph-spinner-gap animate-spin text-4xl text-indigo-400 absolute z-0"></i>
                 <img id="qris-image-view" src="" class="w-full h-full object-contain relative z-10 rounded-xl opacity-0 transition-opacity duration-300" onload="this.classList.remove('opacity-0'); document.getElementById('qris-spinner').style.display='none';" />
             </div>
@@ -650,7 +663,7 @@
             user: null, posName: 'CAFE POS', products: [], categories: [], addonGroups: [], vouchers: [], history: [], cart: [], 
             selectedCategory: 'Semua', paymentMethod: 'Cash', currentTransaction: null, printerDevice: null,
             printerServer: null, printerService: null, printerCharacteristic: null,
-            isOfflineMode: false, dashboardFilterMonth: '', tempPendingProduct: null, currentDiscount: 0, appliedVoucherId: null,
+            isOfflineMode: false, dashboardStartDate: '', dashboardEndDate: '', tempPendingProduct: null, currentDiscount: 0, appliedVoucherId: null,
             veloExtId: null, qrisPollingInterval: null 
         };
 
@@ -706,10 +719,18 @@
         }, 8000);
 
         async function initApp() {
-            const todayStr = new Date().toISOString().substring(0, 7);
-            state.dashboardFilterMonth = todayStr;
-            const filterInput = document.getElementById('dash-month-filter');
-            if (filterInput) filterInput.value = todayStr;
+            const d = new Date();
+            const y = d.getFullYear();
+            const m = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            
+            state.dashboardStartDate = `${y}-${m}-01`;
+            state.dashboardEndDate = `${y}-${m}-${day}`;
+            
+            const startInput = document.getElementById('dash-start-date');
+            const endInput = document.getElementById('dash-end-date');
+            if (startInput) startInput.value = state.dashboardStartDate;
+            if (endInput) endInput.value = state.dashboardEndDate;
 
             try { await auth.signInAnonymously(); } catch (error) { state.isOfflineMode = true; }
             auth.onAuthStateChanged(async (user) => {
@@ -739,7 +760,7 @@
                     state.categories = snap.docs.map(d => ({ id: d.id, ...d.data() }));
                     renderCategories(); 
                     renderCategoryTable();
-                    renderCategoryDropdown(); // ADDED
+                    renderCategoryDropdown(); 
                 }
             }, handleError);
 
@@ -790,7 +811,6 @@
             container.innerHTML = html;
         }
 
-        // ADDED: Fungsi untuk menampilkan kategori di form produk
         function renderCategoryDropdown() {
             const select = document.getElementById('prod-category');
             if (select) {
@@ -969,7 +989,11 @@
         window.removeFromCart = (cartItemId) => { window.playHaptic(); state.cart = state.cart.filter(c => c.cartItemId !== cartItemId); window.renderCart(); };
         window.clearCart = () => { window.playHaptic(); state.cart = []; window.renderCart(); };
 
-        window.updateDashboardFilter = (val) => { state.dashboardFilterMonth = val; renderDashboard(); };
+        window.updateDashboardFilter = () => { 
+            state.dashboardStartDate = document.getElementById('dash-start-date').value;
+            state.dashboardEndDate = document.getElementById('dash-end-date').value;
+            renderDashboard(); 
+        };
 
         function renderDashboard() {
             const activeTransactions = state.history.filter(h => h.status !== 'VOID');
@@ -987,11 +1011,20 @@
             const elDashRevLastMonth = document.getElementById('dash-revenue-lastmonth');
             if (elDashRevLastMonth) elDashRevLastMonth.innerText = formatRp(activeTransactions.filter(h => h.date.startsWith(lastMonthStr)).reduce((sum, h) => sum + h.total, 0));
 
-            const filterMonth = state.dashboardFilterMonth || thisMonthStr;
-            const filterInput = document.getElementById('dash-month-filter');
-            if (filterInput && !filterInput.value) filterInput.value = filterMonth;
+            // Sync form inputs fallback
+            const startInput = document.getElementById('dash-start-date');
+            const endInput = document.getElementById('dash-end-date');
+            if (startInput && !startInput.value) startInput.value = state.dashboardStartDate;
+            if (endInput && !endInput.value) endInput.value = state.dashboardEndDate;
 
-            const filteredTrx = activeTransactions.filter(h => h.date.startsWith(filterMonth));
+            const startDate = state.dashboardStartDate || todayStr;
+            const endDate = state.dashboardEndDate || todayStr;
+
+            const filteredTrx = activeTransactions.filter(h => {
+                const trxDate = h.date.split('T')[0];
+                return trxDate >= startDate && trxDate <= endDate;
+            });
+
             const elFilterRev = document.getElementById('dash-filter-revenue');
             if (elFilterRev) elFilterRev.innerText = formatRp(filteredTrx.reduce((sum, h) => sum + h.total, 0));
             
@@ -1005,6 +1038,46 @@
                     lsContainer.innerHTML = '<p class="text-xs md:text-sm text-gray-500">Semua stok aman.</p>'; 
                 } else { 
                     lsContainer.innerHTML = lowStock.map(p => `<div class="flex justify-between items-center p-2.5 md:p-3 bg-red-50 rounded-xl border border-red-100"><span class="font-bold text-[10px] md:text-sm text-gray-800">${p.name}</span><span class="font-black text-[10px] md:text-sm text-red-600">Sisa ${p.stock}</span></div>`).join(''); 
+                }
+            }
+
+            // ADDED: Logic to calculate and display Top Products (Menu Terlaris)
+            const productSales = {};
+            filteredTrx.forEach(trx => {
+                trx.items.forEach(item => {
+                    const pid = item.product.id;
+                    if (!productSales[pid]) {
+                        productSales[pid] = { name: item.product.name, qty: 0 };
+                    }
+                    productSales[pid].qty += Number(item.quantity);
+                });
+            });
+
+            const topProducts = Object.values(productSales)
+                                      .sort((a, b) => b.qty - a.qty)
+                                      .slice(0, 5); // Ambil Top 5
+
+            const tpContainer = document.getElementById('dash-top-products');
+            if (tpContainer) {
+                if (topProducts.length === 0) {
+                    tpContainer.innerHTML = '<p class="text-xs md:text-sm text-gray-500">Belum ada data penjualan di periode ini.</p>';
+                } else {
+                    tpContainer.innerHTML = topProducts.map((p, index) => {
+                        let rankClass = "bg-indigo-100 text-indigo-600";
+                        if(index === 0) rankClass = "bg-yellow-100 text-yellow-600"; // Juara 1 Emas
+                        else if(index === 1) rankClass = "bg-gray-200 text-gray-600"; // Juara 2 Perak
+                        else if(index === 2) rankClass = "bg-orange-100 text-orange-800"; // Juara 3 Perunggu
+                        
+                        return `
+                        <div class="flex justify-between items-center p-2.5 md:p-3 bg-gray-50 rounded-xl border border-gray-100">
+                            <div class="flex items-center gap-3">
+                                <span class="w-6 h-6 flex items-center justify-center rounded-full font-black text-[10px] md:text-xs ${rankClass}">${index + 1}</span>
+                                <span class="font-bold text-[10px] md:text-sm text-gray-800">${p.name}</span>
+                            </div>
+                            <span class="font-black text-[10px] md:text-sm text-indigo-600">${p.qty} Terjual</span>
+                        </div>
+                        `;
+                    }).join('');
                 }
             }
         }
